@@ -1,0 +1,419 @@
+openapi: 3.0.3
+info:
+  title: Vehicle Collection Service
+  version: "1.0.0"
+  license:
+    name: Proprietary
+
+servers:
+  - url: "{scheme}://{host}:{port}"
+    variables:
+      scheme:
+        default: http
+        enum: [http, https]
+      host:
+        default: localhost
+      port:
+        default: "8080"
+
+security: []
+
+tags:
+  - name: Vehicles
+    description: CRUD и выборки над коллекцией Vehicle
+
+paths:
+  /api/vehicles:
+    post:
+      tags: [Vehicles]
+      operationId: createVehicle
+      summary: Добавить новый элемент в коллекцию
+      description: id и creationDate генерируются сервером, в запросе их передавать не нужно.
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/VehicleInput'
+      responses:
+        '201':
+          description: Объект создан
+          headers:
+            Location:
+              schema:
+                type: string
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    get:
+      tags: [Vehicles]
+      operationId: getVehicles
+      summary: Получить массив элементов коллекции
+      description: >
+        Постраничный вывод с сортировкой (sort) и фильтрацией (filter) по
+        любой комбинации полей. Можно указывать несколько раз для
+        нескольких полей сразу.
+      parameters:
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Filter'
+      responses:
+        '200':
+          description: Страница результатов
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/VehiclePage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/vehicles/{id}:
+    parameters:
+      - $ref: '#/components/parameters/VehicleId'
+    get:
+      tags: [Vehicles]
+      operationId: getVehicleById
+      summary: Получить элемент по ИД
+      responses:
+        '200':
+          description: OK
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Vehicles]
+      operationId: updateVehicle
+      summary: Обновить элемент коллекции
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/VehicleInput'
+      responses:
+        '200':
+          description: Объект обновлён
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Vehicles]
+      operationId: deleteVehicle
+      summary: Удалить элемент коллекции
+      responses:
+        '204':
+          description: Удалено
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/vehicles/sum-engine-power:
+    get:
+      tags: [Vehicles]
+      operationId: sumEnginePower
+      summary: Рассчитать сумму значений поля enginePower для всех объектов коллекции
+      description: Суммируются значения enginePower всех элементов коллекции.
+      responses:
+        '200':
+          description: Сумма значений enginePower
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SumResult'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/vehicles/group-count-by-id:
+    get:
+      tags: [Vehicles]
+      operationId: groupCountById
+      summary: Сгруппировать объекты по значению поля id и вернуть количество элементов в каждой группе
+      description: >
+        Возвращает для каждого id количество элементов коллекции с этим id.
+      responses:
+        '200':
+          description: Количество элементов по каждому id
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/IdGroupCount'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/vehicles/by-type-greater/{type}:
+    get:
+      tags: [Vehicles]
+      operationId: vehiclesByTypeGreaterThan
+      summary: Вернуть массив объектов, значение поля type которых больше заданного
+      description: >
+        Сравнение идёт по порядку объявления в enum: PLANE < HELICOPTER <
+        SPACESHIP. Возвращаются только объекты, у которых type больше
+        переданного значения.
+      parameters:
+        - $ref: '#/components/parameters/VehicleTypePath'
+      responses:
+        '200':
+          description: Массив подходящих объектов
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+components:
+  parameters:
+    VehicleId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+
+    VehicleTypePath:
+      name: type
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/VehicleType'
+
+    PageNumber:
+      name: pageNumber
+      in: query
+      description: номер страницы, с 1
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 1
+
+    PageSize:
+      name: pageSize
+      in: query
+      description: размер страницы
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 10
+
+    Sort:
+      name: sort
+      in: query
+      description: >
+        "поле,направление" (asc/desc, по умолчанию asc). Поля: id, name,
+        coordinates.x, coordinates.y, creationDate, enginePower, type,
+        fuelType. Параметр можно повторять.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          pattern: '^(id|name|coordinates\.x|coordinates\.y|creationDate|enginePower|type|fuelType)(,(asc|desc))?$'
+      example: ["name,asc"]
+
+    Filter:
+      name: filter
+      in: query
+      description: >
+        "поле:оператор:значение", операторы eq/ne/gt/gte/lt/lte/like (like
+        только для строковых полей). Несколько filter объединяются через AND.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      example: ["type:eq:PLANE"]
+
+  responses:
+    NotFound:
+      description: Не найдено
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Данные нарушают ограничения класса или неверный формат параметров
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: Внутренняя ошибка сервера
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    VehicleType:
+      type: string
+      enum: [PLANE, HELICOPTER, SPACESHIP]
+      xml:
+        name: VehicleType
+
+    FuelType:
+      type: string
+      enum: [ELECTRICITY, MANPOWER, ANTIMATTER]
+      xml:
+        name: FuelType
+
+    Coordinates:
+      type: object
+      required: [x, y]
+      properties:
+        x:
+          type: number
+          format: double
+        y:
+          type: integer
+          format: int64
+          exclusiveMinimum: true
+          minimum: -575
+      xml:
+        name: Coordinates
+
+    Vehicle:
+      type: object
+      required: [id, name, coordinates, creationDate, enginePower, type, fuelType]
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        creationDate:
+          type: string
+          format: date-time
+          readOnly: true
+        enginePower:
+          type: number
+          format: double
+          exclusiveMinimum: true
+          minimum: 0
+        type:
+          $ref: '#/components/schemas/VehicleType'
+        fuelType:
+          $ref: '#/components/schemas/FuelType'
+      xml:
+        name: Vehicle
+
+    VehicleInput:
+      type: object
+      required: [name, coordinates, enginePower, type, fuelType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        enginePower:
+          type: number
+          format: double
+          exclusiveMinimum: true
+          minimum: 0
+        type:
+          $ref: '#/components/schemas/VehicleType'
+        fuelType:
+          $ref: '#/components/schemas/FuelType'
+      xml:
+        name: Vehicle
+
+    VehiclePage:
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vehicle'
+          xml:
+            name: vehicle
+            wrapped: true
+      xml:
+        name: VehiclePage
+
+    SumResult:
+      type: object
+      properties:
+        sum:
+          type: number
+          format: double
+      xml:
+        name: SumResult
+
+    IdGroupCountEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        count:
+          type: integer
+          format: int64
+      xml:
+        name: entry
+
+    IdGroupCount:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdGroupCountEntry'
+          xml:
+            name: entry
+            wrapped: true
+      xml:
+        name: IdGroupCount
+
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+      xml:
+        name: Error
