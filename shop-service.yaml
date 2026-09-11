@@ -1,10 +1,6 @@
 openapi: 3.0.3
 info:
   title: Shop Service
-  description: >
-    Дополнительный сервис, реализующий операции поиска транспортных средств,
-    делегируя обращения к API первого сервиса (vehicle-service). Все операции
-    возвращают данные в формате XML.
   version: "1.0.0"
   license:
     name: Proprietary
@@ -34,7 +30,8 @@ paths:
       summary: Найти все транспортные средства заданного типа
       description: >
         Возвращает массив всех транспортных средств, у которых поле type
-        равно переданному значению. Обращение проксируется в vehicle-service.
+        равно переданному значению. Обращение проксируется в vehicle-service;
+        его статусы транслируются клиенту (502/503/504).
       parameters:
         - $ref: '#/components/parameters/VehicleTypePath'
       responses:
@@ -46,8 +43,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Vehicle'
-        '400':
-          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
   /shop/search/by-engine-power/{from}/{to}:
     get:
@@ -57,7 +54,8 @@ paths:
       description: >
         Возвращает массив всех транспортных средств, у которых значение
         enginePower находится в диапазоне [from, to] включительно.
-        Обращение проксируется в vehicle-service.
+        Обращение проксируется в vehicle-service; его статусы транслируются
+        клиенту (502/503/504).
       parameters:
         - $ref: '#/components/parameters/EnginePowerFrom'
         - $ref: '#/components/parameters/EnginePowerTo'
@@ -72,6 +70,8 @@ paths:
                   $ref: '#/components/schemas/Vehicle'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
 components:
   parameters:
@@ -104,7 +104,13 @@ components:
 
   responses:
     BadRequest:
-      description: Неверные параметры запроса
+      description: Синтаксически некорректный запрос — например, нечисловое значение from/to
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnprocessableEntity:
+      description: Запрос синтаксически корректен, но значения нарушают ограничения — type вне перечня допустимых значений или from > to
       content:
         application/xml:
           schema:

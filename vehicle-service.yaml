@@ -48,6 +48,10 @@ paths:
                 $ref: '#/components/schemas/Vehicle'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
     get:
       tags: [Vehicles]
       operationId: getVehicles
@@ -85,8 +89,8 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/Vehicle'
-        '404':
-          $ref: '#/components/responses/NotFound'
+        '410':
+          $ref: '#/components/responses/Gone'
     put:
       tags: [Vehicles]
       operationId: updateVehicle
@@ -104,19 +108,60 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/Vehicle'
+        '204':
+          description: Объект обновлён, тело не возвращается
         '400':
           $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '410':
+          $ref: '#/components/responses/Gone'
+    patch:
+      tags: [Vehicles]
+      operationId: partialUpdateVehicle
+      summary: Частично обновить элемент коллекции
+      description: >
+        Изменяются только поля, переданные в теле запроса (минимум одно);
+        остальные поля остаются без изменений. Поля id и creationDate
+        генерируются сервером и не изменяются.
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/VehiclePatch'
+      responses:
+        '200':
+          description: Объект обновлён
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '204':
+          description: Объект обновлён, тело не возвращается
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '410':
+          $ref: '#/components/responses/Gone'
     delete:
       tags: [Vehicles]
       operationId: deleteVehicle
       summary: Удалить элемент коллекции
+      description: >
+        Идемпотенная операция. Код 404 не используется: он зарезервирован
+        для обращения к несуществующему ресурсу (маршруту), а не к
+        отсутствующему объекту коллекции.
       responses:
         '204':
-          description: Удалено
-        '404':
-          $ref: '#/components/responses/NotFound'
+          description: Объект удалён, тело не возвращается
+        '410':
+          $ref: '#/components/responses/Gone'
 
   /api/vehicles/sum-engine-power:
     get:
@@ -171,8 +216,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Vehicle'
-        '400':
-          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
 
 components:
   parameters:
@@ -218,7 +263,8 @@ components:
       description: >
         "поле,направление" (asc/desc, по умолчанию asc). Поля: id, name,
         coordinates.x, coordinates.y, creationDate, enginePower, type,
-        fuelType. Параметр можно повторять.
+        fuelType. Параметр можно повторять. Если не передан — сортировка
+        по id по возрастанию.
       style: form
       explode: true
       schema:
@@ -226,6 +272,7 @@ components:
         items:
           type: string
           pattern: '^(id|name|coordinates\.x|coordinates\.y|creationDate|enginePower|type|fuelType)(,(asc|desc))?$'
+        default: ["id,asc"]
       example: ["name,asc"]
 
     Filter:
@@ -234,23 +281,37 @@ components:
       description: >
         "поле:оператор:значение", операторы eq/ne/gt/gte/lt/lte/like (like
         только для строковых полей). Несколько filter объединяются через AND.
+        Если не передан — возвращаются все элементы без фильтрации.
       style: form
       explode: true
       schema:
         type: array
         items:
           type: string
+        default: []
       example: ["type:eq:PLANE"]
 
   responses:
-    NotFound:
-      description: Не найдено
+    Gone:
+      description: Объект с указанным id не найден или уже удалён (404 зарезервирован для несуществующего ресурса/маршрута)
       content:
         application/xml:
           schema:
             $ref: '#/components/schemas/Error'
     BadRequest:
-      description: Данные нарушают ограничения класса или неверный формат параметров
+      description: Синтаксически некорректный запрос — невалидный XML, нечисловое значение параметра или параметр, не соответствующий формату (шаблону sort/filter)
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnsupportedMediaType:
+      description: Тело запроса передано не в формате application/xml
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnprocessableEntity:
+      description: Запрос синтаксически корректен, но значения нарушают бизнес-ограничения модели — пустое имя, enginePower <= 0, coordinates.y <= -575, значение type/fuelType вне перечня
       content:
         application/xml:
           schema:
@@ -323,6 +384,30 @@ components:
     VehicleInput:
       type: object
       required: [name, coordinates, enginePower, type, fuelType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        enginePower:
+          type: number
+          format: double
+          exclusiveMinimum: true
+          minimum: 0
+        type:
+          $ref: '#/components/schemas/VehicleType'
+        fuelType:
+          $ref: '#/components/schemas/FuelType'
+      xml:
+        name: Vehicle
+
+    VehiclePatch:
+      type: object
+      description: >
+        Частичное обновление: передаются только изменяемые поля, минимум одно.
+        Незаполненные поля остаются без изменений.
+      minProperties: 1
       properties:
         name:
           type: string
