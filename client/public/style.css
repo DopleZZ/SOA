@@ -1,0 +1,74 @@
+body {
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px;
+    color: #1a1a1a;
+    background: #fdfdfd;
+}
+
+nav {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 16px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #245;
+    font-weight: 600;
+}
+
+fieldset {
+    margin-bottom: 12px;
+}
+
+.row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    text-align: left;
+}
+
+th {
+    background: #f0f0f0;
+}
+
+form.inline {
+    display: inline;
+}
+
+.api-error {
+    background: #fde8e8;
+    border: 1px solid #f2a3a3;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+}
+
+.path {
+    color: #777;
+    font-size: 0.9em;
+}
+
+section {
+    margin-bottom: 32px;
+}

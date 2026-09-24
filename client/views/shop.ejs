@@ -1,0 +1,59 @@
+<%- include('partials/header', { title: 'Магазин' }) %>
+
+<h1>Магазин (shop-service)</h1>
+
+<section>
+    <h2>Поиск по типу</h2>
+    <form method="get" action="/shop/by-type">
+        <select name="type">
+            <option value="">— выберите тип —</option>
+            <% types.forEach(function(t) { %>
+            <option value="<%= t %>" <%= query.type === t ? 'selected' : '' %>><%= t %></option>
+            <% }) %>
+        </select>
+        <button type="submit">Найти</button>
+    </form>
+    <% if (errors.byType) { %>
+    <div class="api-error">
+        <p><strong>Ошибка<%= errors.byType.status ? (' (HTTP ' + errors.byType.status + ')') : '' %>: <%= errors.byType.title %></strong></p>
+        <p><%= errors.byType.detail %></p>
+    </div>
+    <% } else if (byType) { %>
+    <table>
+        <thead><tr><th>id</th><th>name</th><th>type</th><th>enginePower</th><th>fuelType</th></tr></thead>
+        <tbody>
+        <% byType.forEach(function(v) { %>
+        <tr><td><%= v.id %></td><td><%= v.name %></td><td><%= v.type %></td><td><%= v.enginePower %></td><td><%= v.fuelType %></td></tr>
+        <% }) %>
+        </tbody>
+    </table>
+    <% if (byType.length === 0) { %><p>Ничего не найдено.</p><% } %>
+    <% } %>
+</section>
+
+<section>
+    <h2>Поиск по диапазону мощности двигателя</h2>
+    <form method="get" action="/shop/by-engine-power">
+        <label>от <input type="number" step="any" name="from" value="<%= query.from || '' %>"></label>
+        <label>до <input type="number" step="any" name="to" value="<%= query.to || '' %>"></label>
+        <button type="submit">Найти</button>
+    </form>
+    <% if (errors.byRange) { %>
+    <div class="api-error">
+        <p><strong>Ошибка<%= errors.byRange.status ? (' (HTTP ' + errors.byRange.status + ')') : '' %>: <%= errors.byRange.title %></strong></p>
+        <p><%= errors.byRange.detail %></p>
+    </div>
+    <% } else if (byRange) { %>
+    <table>
+        <thead><tr><th>id</th><th>name</th><th>type</th><th>enginePower</th><th>fuelType</th></tr></thead>
+        <tbody>
+        <% byRange.forEach(function(v) { %>
+        <tr><td><%= v.id %></td><td><%= v.name %></td><td><%= v.type %></td><td><%= v.enginePower %></td><td><%= v.fuelType %></td></tr>
+        <% }) %>
+        </tbody>
+    </table>
+    <% if (byRange.length === 0) { %><p>Ничего не найдено.</p><% } %>
+    <% } %>
+</section>
+
+<%- include('partials/footer') %>

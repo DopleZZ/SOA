@@ -1,0 +1,94 @@
+<%- include('partials/header', { title: 'Транспортные средства' }) %>
+
+<h1>Транспортные средства</h1>
+<p><a href="/vehicles/new">Добавить новое транспортное средство</a></p>
+
+<%- include('partials/api-error') %>
+
+<form method="get" action="/">
+    <fieldset>
+        <legend>Постраничный вывод</legend>
+        <label>Номер страницы <input type="number" name="pageNumber" min="1" value="<%= query.pageNumber || 1 %>"></label>
+        <label>Размер страницы <input type="number" name="pageSize" min="1" value="<%= query.pageSize || 10 %>"></label>
+    </fieldset>
+
+    <fieldset>
+        <legend>Сортировка</legend>
+        <% for (let i = 0; i < sortRows; i++) { %>
+        <div class="row">
+            <select name="sort_field_<%= i %>">
+                <option value="">—</option>
+                <% fields.forEach(function(f) { %>
+                <option value="<%= f %>" <%= query['sort_field_' + i] === f ? 'selected' : '' %>><%= f %></option>
+                <% }) %>
+            </select>
+            <select name="sort_dir_<%= i %>">
+                <option value="asc" <%= query['sort_dir_' + i] !== 'desc' ? 'selected' : '' %>>по возрастанию</option>
+                <option value="desc" <%= query['sort_dir_' + i] === 'desc' ? 'selected' : '' %>>по убыванию</option>
+            </select>
+        </div>
+        <% } %>
+    </fieldset>
+
+    <fieldset>
+        <legend>Фильтрация (все условия объединяются через И)</legend>
+        <% for (let i = 0; i < filterRows; i++) { %>
+        <div class="row">
+            <select name="filter_field_<%= i %>">
+                <option value="">—</option>
+                <% fields.forEach(function(f) { %>
+                <option value="<%= f %>" <%= query['filter_field_' + i] === f ? 'selected' : '' %>><%= f %></option>
+                <% }) %>
+            </select>
+            <select name="filter_op_<%= i %>">
+                <% operators.forEach(function(op) { %>
+                <option value="<%= op %>" <%= query['filter_op_' + i] === op ? 'selected' : '' %>><%= op %></option>
+                <% }) %>
+            </select>
+            <input type="text" name="filter_value_<%= i %>" value="<%= query['filter_value_' + i] || '' %>" placeholder="значение">
+        </div>
+        <% } %>
+    </fieldset>
+
+    <button type="submit">Показать</button>
+</form>
+
+<p>
+    Страница <%= page.pageNumber %> из <%= page.totalPages %>, всего элементов: <%= page.totalElements %>
+</p>
+<p>
+    <% if (prevLink) { %><a href="<%= prevLink %>">&laquo; назад</a><% } %>
+    <% if (prevLink && nextLink) { %> | <% } %>
+    <% if (nextLink) { %><a href="<%= nextLink %>">вперёд &raquo;</a><% } %>
+</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>id</th><th>name</th><th>coordinates.x</th><th>coordinates.y</th>
+        <th>creationDate</th><th>enginePower</th><th>type</th><th>fuelType</th><th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% page.items.forEach(function(v) { %>
+    <tr>
+        <td><%= v.id %></td>
+        <td><%= v.name %></td>
+        <td><%= v.coordinates.x %></td>
+        <td><%= v.coordinates.y %></td>
+        <td><%= v.creationDate %></td>
+        <td><%= v.enginePower %></td>
+        <td><%= v.type %></td>
+        <td><%= v.fuelType %></td>
+        <td>
+            <a href="/vehicles/<%= v.id %>/edit">изменить</a>
+            <form method="post" action="/vehicles/<%= v.id %>/delete" class="inline" onsubmit="return confirm('Удалить объект #<%= v.id %>?')">
+                <button type="submit">удалить</button>
+            </form>
+        </td>
+    </tr>
+    <% }) %>
+    </tbody>
+</table>
+
+<%- include('partials/footer') %>

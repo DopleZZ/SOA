@@ -1,0 +1,55 @@
+<%- include('partials/header', { title: mode === 'create' ? 'Новое транспортное средство' : 'Изменение транспортного средства #' + vehicle.id }) %>
+
+<h1><%= mode === 'create' ? 'Новое транспортное средство' : 'Изменение транспортного средства #' + vehicle.id %></h1>
+
+<%- include('partials/api-error') %>
+
+<% const v = vehicle || {}; const c = v.coordinates || {}; %>
+
+<form method="post" action="<%= mode === 'create' ? '/vehicles' : '/vehicles/' + v.id %>">
+    <label>name <input type="text" name="name" value="<%= v.name || '' %>" required></label>
+    <label>coordinates.x <input type="number" step="any" name="x" value="<%= c.x !== undefined ? c.x : (v.x || '') %>" required></label>
+    <label>coordinates.y <input type="number" step="1" name="y" value="<%= c.y !== undefined ? c.y : (v.y || '') %>" required></label>
+    <label>enginePower <input type="number" step="any" name="enginePower" value="<%= v.enginePower || '' %>" required></label>
+    <label>type
+        <select name="type" required>
+            <option value="">—</option>
+            <% types.forEach(function(t) { %><option value="<%= t %>" <%= v.type === t ? 'selected' : '' %>><%= t %></option><% }) %>
+        </select>
+    </label>
+    <label>fuelType
+        <select name="fuelType" required>
+            <option value="">—</option>
+            <% fuelTypes.forEach(function(ft) { %><option value="<%= ft %>" <%= v.fuelType === ft ? 'selected' : '' %>><%= ft %></option><% }) %>
+        </select>
+    </label>
+    <button type="submit"><%= mode === 'create' ? 'Создать' : 'Сохранить (PUT, все поля обязательны)' %></button>
+</form>
+
+<% if (mode === 'edit') { %>
+<h2>Частичное изменение (PATCH)</h2>
+<p>Заполните только те поля, которые нужно изменить.</p>
+<form method="post" action="/vehicles/<%= v.id %>/patch">
+    <label>name <input type="text" name="name"></label>
+    <label>coordinates.x <input type="number" step="any" name="x"></label>
+    <label>coordinates.y <input type="number" step="1" name="y"></label>
+    <label>enginePower <input type="number" step="any" name="enginePower"></label>
+    <label>type
+        <select name="type">
+            <option value="">не менять</option>
+            <% types.forEach(function(t) { %><option value="<%= t %>"><%= t %></option><% }) %>
+        </select>
+    </label>
+    <label>fuelType
+        <select name="fuelType">
+            <option value="">не менять</option>
+            <% fuelTypes.forEach(function(ft) { %><option value="<%= ft %>"><%= ft %></option><% }) %>
+        </select>
+    </label>
+    <button type="submit">Применить PATCH</button>
+</form>
+<% } %>
+
+<p><a href="/">К списку</a></p>
+
+<%- include('partials/footer') %>

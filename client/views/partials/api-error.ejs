@@ -1,0 +1,7 @@
+<% if (typeof apiError !== 'undefined' && apiError) { %>
+<div class="api-error">
+    <p><strong>Ошибка сервиса<%= apiError.status ? (' (HTTP ' + apiError.status + ')') : '' %>: <%= apiError.title %></strong></p>
+    <p><%= apiError.detail %></p>
+    <% if (apiError.path) { %><p class="path">Маршрут: <%= apiError.path %></p><% } %>
+</div>
+<% } %>

@@ -1,0 +1,66 @@
+<%- include('partials/header', { title: 'Статистика' }) %>
+
+<h1>Статистика</h1>
+
+<section>
+    <h2>Сумма enginePower по всем объектам</h2>
+    <% if (errors.sum) { %>
+    <div class="api-error">
+        <p><strong>Ошибка<%= errors.sum.status ? (' (HTTP ' + errors.sum.status + ')') : '' %>: <%= errors.sum.title %></strong></p>
+        <p><%= errors.sum.detail %></p>
+    </div>
+    <% } else { %>
+    <p><%= result.sum %></p>
+    <% } %>
+</section>
+
+<section>
+    <h2>Количество элементов по каждому id</h2>
+    <% if (errors.groups) { %>
+    <div class="api-error">
+        <p><strong>Ошибка<%= errors.groups.status ? (' (HTTP ' + errors.groups.status + ')') : '' %>: <%= errors.groups.title %></strong></p>
+        <p><%= errors.groups.detail %></p>
+    </div>
+    <% } else { %>
+    <table>
+        <thead><tr><th>id</th><th>count</th></tr></thead>
+        <tbody>
+        <% result.groups.forEach(function(g) { %>
+        <tr><td><%= g.id %></td><td><%= g.count %></td></tr>
+        <% }) %>
+        </tbody>
+    </table>
+    <% } %>
+</section>
+
+<section>
+    <h2>Транспортные средства с type больше заданного</h2>
+    <form method="get" action="/stats">
+        <select name="type">
+            <option value="">— выберите тип —</option>
+            <% result.types.forEach(function(t) { %>
+            <option value="<%= t %>" <%= selectedType === t ? 'selected' : '' %>><%= t %></option>
+            <% }) %>
+        </select>
+        <button type="submit">Показать</button>
+    </form>
+    <% if (errors.greaterThan) { %>
+    <div class="api-error">
+        <p><strong>Ошибка<%= errors.greaterThan.status ? (' (HTTP ' + errors.greaterThan.status + ')') : '' %>: <%= errors.greaterThan.title %></strong></p>
+        <p><%= errors.greaterThan.detail %></p>
+    </div>
+    <% } else if (result.greaterThan) { %>
+    <table>
+        <thead>
+        <tr><th>id</th><th>name</th><th>type</th><th>enginePower</th></tr>
+        </thead>
+        <tbody>
+        <% result.greaterThan.forEach(function(v) { %>
+        <tr><td><%= v.id %></td><td><%= v.name %></td><td><%= v.type %></td><td><%= v.enginePower %></td></tr>
+        <% }) %>
+        </tbody>
+    </table>
+    <% } %>
+</section>
+
+<%- include('partials/footer') %>

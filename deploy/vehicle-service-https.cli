@@ -1,0 +1,22 @@
+embed-server --std-out=echo
+
+batch
+/subsystem=elytron/key-store=vehicleKeyStore:add(path=vehicle-keystore.jks, relative-to=jboss.server.config.dir, credential-reference={clear-text=changeit}, type=JKS)
+/subsystem=elytron/key-manager=vehicleKeyManager:add(key-store=vehicleKeyStore, credential-reference={clear-text=changeit})
+/subsystem=elytron/server-ssl-context=vehicleSslContext:add(key-manager=vehicleKeyManager, protocols=["TLSv1.3","TLSv1.2"])
+run-batch
+
+if (outcome == failed) of /subsystem=undertow/server=default-server/https-listener=https:read-resource
+    /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, ssl-context=vehicleSslContext, enabled=true)
+else
+    /subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=ssl-context, value=vehicleSslContext)
+end-if
+
+batch
+/subsystem=ejb3/service=remote:remove
+/subsystem=remoting/http-connector=http-remoting-connector:remove
+/subsystem=undertow/server=default-server/http-listener=default:remove
+/socket-binding-group=standard-sockets/socket-binding=http:remove
+run-batch
+
+stop-embedded-server

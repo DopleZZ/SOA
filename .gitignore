@@ -1,0 +1,5 @@
+target/
+deploy/keystores/
+node_modules/
+*.jks
+*.cer
