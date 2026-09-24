@@ -1,0 +1,9 @@
+def generatedDir = layout.buildDirectory.dir('generated/openapi')
+
+openApiGenerate {
+    configureJaxrsSpec(delegate, 'vehicle-service.yaml', 'ru.itmo.soa.vehicle.api', 'ru.itmo.soa.vehicle.model')
+    outputDir = generatedDir.get().asFile.path
+    globalProperties = [apis: '', models: '']
+}
+
+sourceSets.main.java.srcDir(generatedDir.map { it.dir('java') })

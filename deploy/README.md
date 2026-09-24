@@ -75,9 +75,9 @@ instanceB/bin/jboss-cli.sh --file=shop-service-https.cli
 ## 4. Деплой WAR
 
 ```bash
-mvn -f ../pom.xml package
-instanceA/bin/jboss-cli.sh -c --command="deploy ../vehicle-service/target/vehicle-service.war"
-instanceB/bin/jboss-cli.sh -c --command="deploy ../shop-service/target/shop-service.war"
+(cd .. && ./gradlew build)
+instanceA/bin/jboss-cli.sh -c --command="deploy ../vehicle-service/build/libs/vehicle-service.war"
+instanceB/bin/jboss-cli.sh -c --command="deploy ../shop-service/build/libs/shop-service.war"
 ```
 
 ## 5. Проверка

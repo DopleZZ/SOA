@@ -9,6 +9,8 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import ru.itmo.soa.shop.model.Error;
 
+import java.time.Instant;
+
 @Provider
 public class ApiExceptionMapper implements ExceptionMapper<Throwable> {
 
@@ -34,7 +36,12 @@ public class ApiExceptionMapper implements ExceptionMapper<Throwable> {
 
         String rawPath = uriInfo != null ? uriInfo.getPath() : "";
         String path = rawPath.startsWith("/") ? rawPath : "/" + rawPath;
-        Error error = new Error(status, reason, message, path);
+        Error error = new Error()
+                .timestamp(Instant.now().toString())
+                .status(status)
+                .error(reason)
+                .message(message)
+                .path(path);
 
         return Response.status(status)
                 .type(MediaType.APPLICATION_XML)

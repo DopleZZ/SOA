@@ -7,8 +7,11 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import ru.itmo.soa.shop.exception.ApiException;
+import ru.itmo.soa.shop.client.model.VehiclePage;
+import ru.itmo.soa.shop.model.Coordinates;
+import ru.itmo.soa.shop.model.FuelType;
 import ru.itmo.soa.shop.model.Vehicle;
-import ru.itmo.soa.shop.model.VehiclePage;
+import ru.itmo.soa.shop.model.VehicleType;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -65,13 +68,26 @@ public class VehicleServiceClient implements AutoCloseable {
             }
             final WebTarget requestTarget = target;
             VehiclePage page = call(() -> requestTarget.request(MediaType.APPLICATION_XML).get(VehiclePage.class));
-            result.addAll(page.getItems());
+            page.getItems().stream().map(VehicleServiceClient::toShopVehicle).forEach(result::add);
             if (page.getTotalPages() == null || pageNumber >= page.getTotalPages() || page.getItems().isEmpty()) {
                 break;
             }
             pageNumber++;
         }
         return result;
+    }
+
+    private static Vehicle toShopVehicle(ru.itmo.soa.shop.client.model.Vehicle source) {
+        return new Vehicle()
+                .id(source.getId())
+                .name(source.getName())
+                .coordinates(new Coordinates()
+                        .x(source.getCoordinates().getX())
+                        .y(source.getCoordinates().getY()))
+                .creationDate(source.getCreationDate())
+                .enginePower(source.getEnginePower())
+                .type(VehicleType.fromValue(source.getType().toString()))
+                .fuelType(FuelType.fromValue(source.getFuelType().toString()));
     }
 
     @Override

@@ -9,6 +9,7 @@ import ru.itmo.soa.vehicle.model.VehiclePatch;
 import ru.itmo.soa.vehicle.model.VehicleType;
 
 import java.time.Instant;
+import java.util.Arrays;
 
 public final class VehicleValidator {
 
@@ -34,7 +35,7 @@ public final class VehicleValidator {
     }
 
     public static Vehicle applyPatch(Vehicle existing, VehiclePatch patch) {
-        if (patch == null || patch.isEmpty()) {
+        if (patch == null || isEmpty(patch)) {
             throw ApiException.unprocessableEntity("Нужно передать хотя бы одно изменяемое поле");
         }
         Vehicle merged = new Vehicle();
@@ -46,6 +47,11 @@ public final class VehicleValidator {
         merged.setType(patch.getType() != null ? validateType(patch.getType()) : existing.getType());
         merged.setFuelType(patch.getFuelType() != null ? validateFuelType(patch.getFuelType()) : existing.getFuelType());
         return merged;
+    }
+
+    private static boolean isEmpty(VehiclePatch patch) {
+        return patch.getName() == null && patch.getCoordinates() == null && patch.getEnginePower() == null
+                && patch.getType() == null && patch.getFuelType() == null;
     }
 
     private static String validateName(String name) {
@@ -72,25 +78,19 @@ public final class VehicleValidator {
         return enginePower;
     }
 
-    private static VehicleType validateType(String type) {
+    private static VehicleType validateType(VehicleType type) {
         if (type == null) {
-            throw ApiException.unprocessableEntity("Поле type обязательно");
+            throw ApiException.unprocessableEntity("Поле type обязательно и должно быть одним из "
+                    + Arrays.toString(VehicleType.values()));
         }
-        try {
-            return VehicleType.valueOf(type);
-        } catch (IllegalArgumentException e) {
-            throw ApiException.unprocessableEntity("Значение type вне допустимого перечня: " + type);
-        }
+        return type;
     }
 
-    private static FuelType validateFuelType(String fuelType) {
+    private static FuelType validateFuelType(FuelType fuelType) {
         if (fuelType == null) {
-            throw ApiException.unprocessableEntity("Поле fuelType обязательно");
+            throw ApiException.unprocessableEntity("Поле fuelType обязательно и должно быть одним из "
+                    + Arrays.toString(FuelType.values()));
         }
-        try {
-            return FuelType.valueOf(fuelType);
-        } catch (IllegalArgumentException e) {
-            throw ApiException.unprocessableEntity("Значение fuelType вне допустимого перечня: " + fuelType);
-        }
+        return fuelType;
     }
 }

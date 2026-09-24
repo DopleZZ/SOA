@@ -15,22 +15,33 @@
 - `deploy/` — генерация самоподписанных сертификатов и CLI-скрипты для
   настройки HTTPS-only на двух инстансах WildFly (см. `deploy/README.md`).
 
-Хендлеры (`*Api` интерфейсы с JAX-RS аннотациями) для обоих сервисов
-сгенерированы из спецификаций через `openapi-generator` (генератор
-`jaxrs-spec`, `interfaceOnly=true`, `useJakartaEe=true`) и затем донастроены
-вручную (генератор не проставляет JAXB/XML-биндинги и не даёт нужного
-контроля над кодами ошибок — see `vehicle-service/src/main/java/.../api`,
-`shop-service/src/main/java/.../api`). Остальной код (модели, валидация,
-хранилище, прокси-клиент, обработка ошибок) написан вручную по спецификации.
+Интерфейсы ресурсов (`VehiclesApi`, `ShopApi`) и все DTO генерируются из
+спецификаций при каждой сборке плагином `org.openapi.generator` (генератор
+`jaxrs-spec`, `interfaceOnly=true`, `returnResponse=true`, `useJakartaEe=true`)
+в `*/build/generated/openapi` и в git не хранятся — у сгенерированных классов
+стоит `@jakarta.annotation.Generated(value = "org.openapitools.codegen...")`.
+shop-service дополнительно генерирует из `vehicle-service.yaml` DTO для своего
+HTTP-клиента (`ru.itmo.soa.shop.client.model`). Настройки — в `build.gradle`.
+
+`jaxrs-spec` не умеет JAXB-аннотации, поэтому два шаблона генератора
+переопределены в `openapi-templates/`: `pojo.mustache` добавляет
+`@XmlRootElement`/`@XmlElement`/`@XmlElementWrapper`, `enumOuterClass.mustache` —
+`XmlAdapter`, который сообщает о значении вне перечня вместо молчаливого `null`.
+
+Вручную написаны реализации интерфейсов (`resource/`), валидация, хранилище,
+фильтрация/сортировка, прокси-клиент и обработка ошибок, а также
+`ParamConverters` (400/422 вместо стандартного 404 для непреобразуемых
+параметров пути/запроса) и `StrictJaxbContextResolver` (ошибки преобразования
+значений в XML-теле → 400/422).
 
 ## Сборка
 
 ```bash
-mvn package
+./gradlew build
 ```
 
-Получаются `vehicle-service/target/vehicle-service.war` и
-`shop-service/target/shop-service.war` — деплоятся на два независимых
+Получаются `vehicle-service/build/libs/vehicle-service.war` и
+`shop-service/build/libs/shop-service.war` — деплоятся на два независимых
 инстанса WildFly (см. `deploy/README.md` про HTTPS-only и сертификаты).
 
 ## Клиент локально

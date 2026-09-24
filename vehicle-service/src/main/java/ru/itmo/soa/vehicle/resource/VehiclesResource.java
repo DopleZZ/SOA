@@ -1,6 +1,7 @@
 package ru.itmo.soa.vehicle.resource;
 
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import ru.itmo.soa.vehicle.api.VehiclesApi;
@@ -43,9 +44,9 @@ public class VehiclesResource implements VehiclesApi {
     }
 
     @Override
-    public VehiclePage getVehicles(String pageNumberRaw, String pageSizeRaw, List<String> sort, List<String> filter) {
-        int pageNumber = parsePositiveInt(pageNumberRaw, "pageNumber");
-        int pageSize = parsePositiveInt(pageSizeRaw, "pageSize");
+    public Response getVehicles(Integer pageNumber, Integer pageSize, List<String> sort, List<String> filter) {
+        requirePositive(pageNumber, "pageNumber");
+        requirePositive(pageSize, "pageSize");
 
         Comparator<Vehicle> comparator = SortSpec.parse(sort);
         java.util.function.Predicate<Vehicle> predicate = FilterSpec.parse(filter);
@@ -66,83 +67,76 @@ public class VehiclesResource implements VehiclesApi {
         page.setTotalElements((long) totalElements);
         page.setTotalPages(totalPages);
         page.setItems(filtered.subList(fromIndex, toIndex));
-        return page;
+        return Response.ok(page).build();
     }
 
     @Override
-    public Vehicle getVehicleById(Long id) {
-        return store.findById(id)
+    public Response getVehicleById(Long id) {
+        Vehicle vehicle = store.findById(id)
                 .orElseThrow(() -> ApiException.gone("Объект с id=" + id + " не найден"));
+        return Response.ok(vehicle).build();
     }
 
     @Override
-    public Vehicle updateVehicle(Long id, VehicleInput vehicleInput) {
+    public Response updateVehicle(Long id, VehicleInput vehicleInput) {
         store.findById(id).orElseThrow(() -> ApiException.gone("Объект с id=" + id + " не найден"));
         Vehicle replacement = VehicleValidator.fromInputForReplace(vehicleInput);
-        return store.update(id, replacement)
+        Vehicle updated = store.update(id, replacement)
                 .orElseThrow(() -> ApiException.gone("Объект с id=" + id + " не найден"));
+        return Response.ok(updated).build();
     }
 
     @Override
-    public Vehicle partialUpdateVehicle(Long id, VehiclePatch vehiclePatch) {
+    public Response partialUpdateVehicle(Long id, VehiclePatch vehiclePatch) {
         Vehicle existing = store.findById(id)
                 .orElseThrow(() -> ApiException.gone("Объект с id=" + id + " не найден"));
         Vehicle merged = VehicleValidator.applyPatch(existing, vehiclePatch);
-        return store.update(id, merged)
+        Vehicle updated = store.update(id, merged)
                 .orElseThrow(() -> ApiException.gone("Объект с id=" + id + " не найден"));
+        return Response.ok(updated).build();
     }
 
     @Override
-    public void deleteVehicle(Long id) {
+    public Response deleteVehicle(Long id) {
         if (!store.deleteById(id)) {
             throw ApiException.gone("Объект с id=" + id + " не найден или уже удалён");
         }
+        return Response.noContent().build();
     }
 
     @Override
-    public SumResult sumEnginePower() {
+    public Response sumEnginePower() {
         double sum = store.findAll().stream()
                 .mapToDouble(Vehicle::getEnginePower)
                 .sum();
-        return new SumResult(sum);
+        return Response.ok(new SumResult().sum(sum)).build();
     }
 
     @Override
-    public IdGroupCount groupCountById() {
+    public Response groupCountById() {
         Map<Long, Long> counts = new LinkedHashMap<>();
         for (Vehicle vehicle : store.findAll()) {
             counts.merge(vehicle.getId(), 1L, Long::sum);
         }
         IdGroupCount result = new IdGroupCount();
         for (Map.Entry<Long, Long> entry : counts.entrySet()) {
-            result.getEntries().add(new IdGroupCountEntry(entry.getKey(), entry.getValue()));
+            result.addEntriesItem(new IdGroupCountEntry().id(entry.getKey()).count(entry.getValue()));
         }
-        return result;
+        return Response.ok(result).build();
     }
 
     @Override
-    public List<Vehicle> vehiclesByTypeGreaterThan(String type) {
-        VehicleType threshold;
-        try {
-            threshold = VehicleType.valueOf(type);
-        } catch (IllegalArgumentException e) {
-            throw ApiException.unprocessableEntity("Значение type вне допустимого перечня: " + type);
-        }
-        return store.findAll().stream()
-                .filter(vehicle -> vehicle.getType().ordinal() > threshold.ordinal())
+    public Response vehiclesByTypeGreaterThan(VehicleType type) {
+        List<Vehicle> vehicles = store.findAll().stream()
+                .filter(vehicle -> vehicle.getType().ordinal() > type.ordinal())
                 .collect(Collectors.toList());
+        return Response.ok(new GenericEntity<List<Vehicle>>(vehicles) {
+        }).build();
     }
 
-    private int parsePositiveInt(String raw, String paramName) {
-        int value;
-        try {
-            value = Integer.parseInt(raw);
-        } catch (NumberFormatException e) {
-            throw ApiException.badRequest("Нечисловое значение параметра " + paramName + ": " + raw);
-        }
+    private void requirePositive(int value, String paramName) {
         if (value < 1) {
             throw ApiException.badRequest("Параметр " + paramName + " должен быть не меньше 1");
         }
-        return value;
     }
 }

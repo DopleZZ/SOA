@@ -1,0 +1,19 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
+def generatedDir = layout.buildDirectory.dir('generated/openapi')
+def vehicleClientDir = layout.buildDirectory.dir('generated/openapi-vehicle-client')
+
+openApiGenerate {
+    configureJaxrsSpec(delegate, 'shop-service.yaml', 'ru.itmo.soa.shop.api', 'ru.itmo.soa.shop.model')
+    outputDir = generatedDir.get().asFile.path
+    globalProperties = [apis: '', models: '']
+}
+
+tasks.register('openApiGenerateVehicleClient', GenerateTask) {
+    configureJaxrsSpec(delegate, 'vehicle-service.yaml', 'ru.itmo.soa.shop.client.api', 'ru.itmo.soa.shop.client.model')
+    outputDir = vehicleClientDir.get().asFile.path
+    globalProperties = [models: '']
+}
+
+sourceSets.main.java.srcDir(generatedDir.map { it.dir('java') })
+sourceSets.main.java.srcDir(vehicleClientDir.map { it.dir('java') })

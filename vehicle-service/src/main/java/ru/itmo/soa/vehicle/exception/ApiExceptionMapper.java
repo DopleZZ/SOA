@@ -11,6 +11,8 @@ import jakarta.ws.rs.ext.Provider;
 import jakarta.xml.bind.UnmarshalException;
 import ru.itmo.soa.vehicle.model.Error;
 
+import java.time.Instant;
+
 @Provider
 public class ApiExceptionMapper implements ExceptionMapper<Throwable> {
 
@@ -23,7 +25,16 @@ public class ApiExceptionMapper implements ExceptionMapper<Throwable> {
         String reason;
         String message;
 
-        if (exception instanceof WebApplicationException wae) {
+        Throwable invalidValue = bodyConversionError(exception);
+        if (invalidValue instanceof NumberFormatException) {
+            status = Response.Status.BAD_REQUEST.getStatusCode();
+            reason = Response.Status.BAD_REQUEST.getReasonPhrase();
+            message = "Нечисловое значение в теле запроса: " + invalidValue.getMessage();
+        } else if (invalidValue != null) {
+            status = ExtraStatus.UNPROCESSABLE_ENTITY.getStatusCode();
+            reason = ExtraStatus.UNPROCESSABLE_ENTITY.getReasonPhrase();
+            message = invalidValue.getMessage();
+        } else if (exception instanceof WebApplicationException wae) {
             Response response = wae.getResponse();
             status = response.getStatus();
             reason = response.getStatusInfo().getReasonPhrase();
@@ -40,11 +51,29 @@ public class ApiExceptionMapper implements ExceptionMapper<Throwable> {
 
         String rawPath = uriInfo != null ? uriInfo.getPath() : "";
         String path = rawPath.startsWith("/") ? rawPath : "/" + rawPath;
-        Error error = new Error(status, reason, message, path);
+        Error error = new Error()
+                .timestamp(Instant.now().toString())
+                .status(status)
+                .error(reason)
+                .message(message)
+                .path(path);
 
         return Response.status(status)
                 .type(MediaType.APPLICATION_XML)
                 .entity(error)
                 .build();
+    }
+
+    private static Throwable bodyConversionError(Throwable exception) {
+        boolean inUnmarshal = false;
+        Throwable current = exception;
+        for (int depth = 0; current != null && depth < 20; depth++, current = current.getCause()) {
+            if (current instanceof UnmarshalException) {
+                inUnmarshal = true;
+            } else if (inUnmarshal && current instanceof IllegalArgumentException) {
+                return current;
+            }
+        }
+        return null;
     }
 }

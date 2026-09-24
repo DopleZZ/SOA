@@ -66,7 +66,7 @@ public class VehicleStore {
         copy.setId(source.getId());
         copy.setName(source.getName());
         Coordinates c = source.getCoordinates();
-        copy.setCoordinates(new Coordinates(c.getX(), c.getY()));
+        copy.setCoordinates(new Coordinates().x(c.getX()).y(c.getY()));
         copy.setCreationDate(source.getCreationDate());
         copy.setEnginePower(source.getEnginePower());
         copy.setType(source.getType());

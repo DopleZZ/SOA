@@ -1,0 +1,75 @@
+plugins {
+    id 'org.openapi.generator' version '7.8.0' apply false
+}
+
+ext {
+    jakartaWsRsVersion = '3.1.0'
+    jakartaXmlBindVersion = '4.0.2'
+    jakartaAnnotationVersion = '2.1.1'
+    jacksonVersion = '2.17.2'
+}
+
+subprojects {
+    apply plugin: 'war'
+    apply plugin: 'org.openapi.generator'
+
+    group = 'ru.itmo.soa'
+    version = '1.0.0'
+
+    repositories {
+        mavenCentral()
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+
+    dependencies {
+        providedCompile "jakarta.ws.rs:jakarta.ws.rs-api:${rootProject.jakartaWsRsVersion}"
+        providedCompile "jakarta.xml.bind:jakarta.xml.bind-api:${rootProject.jakartaXmlBindVersion}"
+        providedCompile "jakarta.annotation:jakarta.annotation-api:${rootProject.jakartaAnnotationVersion}"
+        providedCompile "com.fasterxml.jackson.core:jackson-annotations:${rootProject.jacksonVersion}"
+    }
+
+    ext.configureJaxrsSpec = { task, String spec, String apiPackage, String modelPackage ->
+        task.generatorName = 'jaxrs-spec'
+        task.inputSpec = "${rootDir}/${spec}"
+        task.templateDir = "${rootDir}/openapi-templates"
+        task.apiPackage = apiPackage
+        task.modelPackage = modelPackage
+        task.configOptions = [
+                interfaceOnly          : 'true',
+                returnResponse         : 'true',
+                useTags                : 'true',
+                useJakartaEe           : 'true',
+                useBeanValidation      : 'false',
+                useSwaggerAnnotations  : 'false',
+                hideGenerationTimestamp: 'true',
+                sourceFolder           : 'java',
+        ]
+        task.typeMappings = [DateTime: 'String']
+        task.importMappings = [OffsetDateTime: 'java.lang.String']
+        task.generateApiDocumentation = false
+        task.generateModelDocumentation = false
+        task.generateApiTests = false
+        task.generateModelTests = false
+    }
+
+    tasks.named('compileJava') {
+        dependsOn tasks.withType(org.openapitools.generator.gradle.plugin.tasks.GenerateTask)
+    }
+
+    war {
+        archiveFileName = "${project.name}.war"
+    }
+
+    jar {
+        enabled = false
+    }
+}
