@@ -289,7 +289,7 @@ components:
         items:
           type: string
         default: []
-      example: ["type:eq:PLANE"]
+      example: ["type==PLANE"]
 
   responses:
     Gone:

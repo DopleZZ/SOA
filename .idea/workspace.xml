@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ec1ed529-839b-4e5d-a183-a2352d9fcbc5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/public/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/routes/vehicles.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/routes/vehicles.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/views/index.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/client/views/index.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/generate-keystores.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/shop-service-https.cli" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy/vehicle-service-https.cli" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/resource/ShopResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/resource/ShopResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/FilterSpec.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/SortSpec.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/VehicleField.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/VehicleField.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/resource/VehiclesResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/resource/VehiclesResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/store/VehicleStore.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/Users/artem/Documents/SOA" value="3J94NuZvRXT9RlxoAbzSLQKiQ5n" />
+    </persistenceIdMap>
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="soa-lab2" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="soa-lab2" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="soa-lab2" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;DopleZZ&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/DopleZZ/SOA.git&quot;,
+    &quot;accountId&quot;: &quot;bfe2d296-4125-4fb4-b30b-5c46b2ea632b&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="3J94NmBzlohXxy4CdbzaE0PpB6y" />
+  <component name="ProjectSessionTemplates">
+    <option name="panelTemplate">
+      <template>
+        <option name="modeId" value="Agent" />
+        <option name="model">
+          <model>
+            <option name="modelType" value="builtin_id" />
+            <option name="modelValue" value="auto" />
+          </model>
+        </option>
+        <option name="targetType" value="BACKGROUND" />
+        <option name="worktreeMode" value="WORKSPACE" />
+      </template>
+    </option>
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.SOA [build].executor": "Run",
+    "Gradle.SOA [war].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/montana/MyLabs/soa/SOA",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Gradle.SOA [war]">
+    <configuration name="SOA [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="SOA [war]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="war" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.SOA [war]" />
+        <item itemvalue="Gradle.SOA [build]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.31033.145" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ec1ed529-839b-4e5d-a183-a2352d9fcbc5" name="Changes" comment="" />
+      <created>1789059913278</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1789059913278</updated>
+      <workItem from="1789059915337" duration="4613000" />
+      <workItem from="1790000838967" duration="644000" />
+      <workItem from="1790270615021" duration="2395000" />
+      <workItem from="1790340313331" duration="8479000" />
+      <workItem from="1791386028689" duration="4899000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="123" />
+    <MESSAGE value="123" />
+    <option name="LAST_COMMIT_MESSAGE" value="123" />
+  </component>
+</project>

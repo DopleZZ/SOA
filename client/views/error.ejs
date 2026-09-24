@@ -1,0 +1,10 @@
+<%- include('partials/header', { title: title }) %>
+
+<h1><%= title %></h1>
+<p>Статус: <%= status %></p>
+<p><%= message %></p>
+<% if (typeof path !== 'undefined' && path) { %><p class="path">Маршрут: <%= path %></p><% } %>
+
+<p><a href="/">На главную</a></p>
+
+<%- include('partials/footer') %>
