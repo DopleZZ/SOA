@@ -1,0 +1,6 @@
+FROM quay.io/wildfly/wildfly:26.1.3.Final-jdk11
+
+ARG WAR
+COPY ${WAR} /opt/jboss/wildfly/standalone/deployments/
+
+ENV JAVA_OPTS="-Xms64m -Xmx384m -XX:MaxMetaspaceSize=256m -Xss256k -XX:+UseSerialGC -XX:ActiveProcessorCount=1"

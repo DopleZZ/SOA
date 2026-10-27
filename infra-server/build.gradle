@@ -1,0 +1,7 @@
+ext.mainClass = 'ru.itmo.soa.infra.InfraServerApplication'
+
+dependencies {
+    implementation 'org.springframework.cloud:spring-cloud-config-server'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-zuul'
+}

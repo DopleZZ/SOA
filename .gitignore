@@ -6,3 +6,8 @@ node_modules/
 build/
 .gradle/
 client/dist/
+helios-deploy/jars/
+helios-deploy/logs/
+helios-deploy/haproxy/haproxy.cfg
+helios-deploy/haproxy/haproxy-*/
+helios-deploy/client-dist/config.js.bak

@@ -1,16 +1,79 @@
+ext.mainClass = 'ru.itmo.soa.vehicle.VehicleServiceApplication'
+
+apply plugin: 'war'
+apply plugin: 'org.openapi.generator'
+
 def generatedDir = layout.buildDirectory.dir('generated/openapi')
 
 openApiGenerate {
-    configureJaxrsSpec(delegate, 'vehicle-service.yaml', 'ru.itmo.soa.vehicle.api', 'ru.itmo.soa.vehicle.model')
+    configureModelSpec(delegate, 'vehicle-service.yaml', 'ru.itmo.soa.vehicle.api', 'ru.itmo.soa.vehicle.model')
     outputDir = generatedDir.get().asFile.path
-    globalProperties = [apis: '', models: '']
+    globalProperties = [models: '']
 }
 
-dependencies {
-    providedCompile 'jakarta.persistence:jakarta.persistence-api:3.1.0'
-    providedCompile 'jakarta.transaction:jakarta.transaction-api:2.0.1'
-    providedCompile 'jakarta.inject:jakarta.inject-api:2.0.1'
-    implementation 'cz.jirutka.rsql:rsql-parser:2.1.0'
+tasks.named('compileJava') {
+    dependsOn tasks.withType(org.openapitools.generator.gradle.plugin.tasks.GenerateTask)
 }
 
 sourceSets.main.java.srcDir(generatedDir.map { it.dir('java') })
+
+def springApiDir = layout.buildDirectory.dir('generated/openapi-spring-api')
+
+tasks.register('openApiGenerateSpringApi', org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    generatorName = 'spring'
+    inputSpec = "${rootDir}/vehicle-service.yaml"
+    apiPackage = 'ru.itmo.soa.vehicle.api'
+    modelPackage = 'ru.itmo.soa.vehicle.model'
+    outputDir = springApiDir.get().asFile.path
+    configOptions = [
+            interfaceOnly      : 'true',
+            skipDefaultInterface: 'true',
+            useTags            : 'true',
+            useBeanValidation  : 'false',
+            openApiNullable    : 'false',
+            hideGenerationTimestamp: 'true',
+    ]
+    typeMappings = [DateTime: 'String']
+    importMappings = [OffsetDateTime: 'java.lang.String']
+    generateApiTests = false
+    generateModelTests = false
+    generateApiDocumentation = false
+    generateModelDocumentation = false
+    globalProperties = [apis: '']
+}
+
+sourceSets.main.java.srcDir(springApiDir.map { it.dir('src/main/java/ru/itmo/soa/vehicle/api') })
+
+configurations.all {
+    exclude group: 'ch.qos.logback', module: 'logback-classic'
+    exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
+}
+
+dependencies {
+    implementation 'org.slf4j:slf4j-api'
+    implementation 'org.slf4j:slf4j-simple'
+    implementation('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
+    providedCompile "org.springframework.boot:spring-boot-starter-tomcat:${rootProject.springBootVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon'
+    implementation 'org.postgresql:postgresql'
+    implementation 'cz.jirutka.rsql:rsql-parser:2.1.0'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.3'
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation "org.springdoc:springdoc-openapi-ui:${rootProject.springdocVersion}"
+}
+
+tasks.named('serviceJar') { enabled = false }
+tasks.named('copyLibs') { enabled = false }
+
+war {
+    archiveFileName = "${project.name}.war"
+    destinationDirectory = layout.buildDirectory.dir('dist')
+}

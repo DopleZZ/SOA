@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: vehicle-service
+  cloud:
+    refresh:
+      enabled: false
+    config:
+      uri: ${CONFIG_SERVER_URL:https://localhost:19100}
+      fail-fast: true

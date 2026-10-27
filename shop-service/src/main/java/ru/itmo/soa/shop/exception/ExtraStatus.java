@@ -1,33 +1,24 @@
 package ru.itmo.soa.shop.exception;
 
-import jakarta.ws.rs.core.Response;
-
-public enum ExtraStatus implements Response.StatusType {
+public enum ExtraStatus {
 
     UNPROCESSABLE_ENTITY(422, "Unprocessable Entity"),
     BAD_GATEWAY(502, "Bad Gateway"),
     GATEWAY_TIMEOUT(504, "Gateway Timeout");
 
-    private final int code;
-    private final String reason;
+    private final int statusCode;
+    private final String reasonPhrase;
 
-    ExtraStatus(int code, String reason) {
-        this.code = code;
-        this.reason = reason;
+    ExtraStatus(int statusCode, String reasonPhrase) {
+        this.statusCode = statusCode;
+        this.reasonPhrase = reasonPhrase;
     }
 
-    @Override
     public int getStatusCode() {
-        return code;
+        return statusCode;
     }
 
-    @Override
-    public Response.Status.Family getFamily() {
-        return Response.Status.Family.familyOf(code);
-    }
-
-    @Override
     public String getReasonPhrase() {
-        return reason;
+        return reasonPhrase;
     }
 }

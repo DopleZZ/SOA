@@ -1,0 +1,28 @@
+server:
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: /tmp
+      prefix: vehicle-access
+      suffix: .log
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:vehicles}
+    username: ${DB_USER:vehicles}
+    password: ${DB_PASSWORD:vehicles}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:https://se.ifmo.ru,https://localhost:8080,http://localhost:3000,http://localhost:8080,http://localhost}
+
+eureka:
+  instance:
+    non-secure-port: ${INSTANCE_HTTP_PORT:8080}

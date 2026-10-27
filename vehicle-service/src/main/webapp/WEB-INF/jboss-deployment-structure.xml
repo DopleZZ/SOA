@@ -1,0 +1,13 @@
+<jboss-deployment-structure>
+    <deployment>
+        <exclusions>
+            <module name="org.hibernate"/>
+            <module name="com.fasterxml.jackson.datatype.jackson-datatype-jdk8"/>
+            <module name="com.fasterxml.jackson.datatype.jackson-datatype-jsr310"/>
+            <module name="com.fasterxml.jackson.module.jackson-module-parameter-names"/>
+            <module name="org.hibernate.envers"/>
+            <module name="org.hibernate.search.orm"/>
+            <module name="org.jboss.resteasy.resteasy-jackson2-provider"/>
+        </exclusions>
+    </deployment>
+</jboss-deployment-structure>

@@ -1,0 +1,37 @@
+zuul:
+  routes:
+    vehicles:
+      path: /api/vehicles/**
+      service-id: vehicle-service
+      strip-prefix: false
+    shop:
+      path: /shop/**
+      url: ${SHOP_ROUTE_URL:http://localhost:8090}
+      strip-prefix: false
+  host:
+    connect-timeout-millis: 3000
+    socket-timeout-millis: 10000
+    max-total-connections: 20
+    max-per-route-connections: 10
+
+vehicles:
+  ribbon:
+    ReadTimeout: 8000
+    ConnectTimeout: 2000
+    MaxAutoRetries: 0
+    MaxAutoRetriesNextServer: 1
+    OkToRetryOnAllOperations: false
+    ServerListRefreshInterval: 2000
+
+ribbon:
+  eager-load:
+    enabled: true
+    clients: vehicle-service
+
+server:
+  ssl:
+    enabled: ${GATEWAY_SSL_ENABLED:false}
+    key-store: ${GATEWAY_SSL_KEYSTORE:}
+    key-store-password: ${GATEWAY_SSL_KEYSTORE_PASSWORD:changeit}
+    key-store-type: JKS
+    key-alias: gateway

@@ -3,15 +3,13 @@ plugins {
 }
 
 ext {
-    jakartaWsRsVersion = '3.1.0'
-    jakartaXmlBindVersion = '4.0.2'
-    jakartaAnnotationVersion = '2.1.1'
-    jacksonVersion = '2.17.2'
+    springBootVersion = '2.3.12.RELEASE'
+    springCloudVersion = 'Hoxton.SR12'
+    springdocVersion = '1.4.8'
 }
 
 subprojects {
-    apply plugin: 'war'
-    apply plugin: 'org.openapi.generator'
+    apply plugin: 'java'
 
     group = 'ru.itmo.soa'
     version = '1.0.0'
@@ -20,25 +18,17 @@ subprojects {
         mavenCentral()
     }
 
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
-        }
-    }
-
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
+        options.release = 11
     }
 
     dependencies {
-        providedCompile "jakarta.ws.rs:jakarta.ws.rs-api:${rootProject.jakartaWsRsVersion}"
-        providedCompile "jakarta.xml.bind:jakarta.xml.bind-api:${rootProject.jakartaXmlBindVersion}"
-        providedCompile "jakarta.annotation:jakarta.annotation-api:${rootProject.jakartaAnnotationVersion}"
-        providedCompile "jakarta.servlet:jakarta.servlet-api:6.0.0"
-        providedCompile "com.fasterxml.jackson.core:jackson-annotations:${rootProject.jacksonVersion}"
+        implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+        implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     }
 
-    ext.configureJaxrsSpec = { task, String spec, String apiPackage, String modelPackage ->
+    ext.configureModelSpec = { task, String spec, String apiPackage, String modelPackage ->
         task.generatorName = 'jaxrs-spec'
         task.inputSpec = "${rootDir}/${spec}"
         task.templateDir = "${rootDir}/openapi-templates"
@@ -48,7 +38,7 @@ subprojects {
                 interfaceOnly          : 'true',
                 returnResponse         : 'true',
                 useTags                : 'true',
-                useJakartaEe           : 'true',
+                useJakartaEe           : 'false',
                 useBeanValidation      : 'false',
                 useSwaggerAnnotations  : 'false',
                 hideGenerationTimestamp: 'true',
@@ -60,17 +50,39 @@ subprojects {
         task.generateModelDocumentation = false
         task.generateApiTests = false
         task.generateModelTests = false
+        task.cleanupOutput = true
     }
 
-    tasks.named('compileJava') {
-        dependsOn tasks.withType(org.openapitools.generator.gradle.plugin.tasks.GenerateTask)
+    tasks.register('serviceJar', Jar) {
+        dependsOn tasks.named('classes')
+        archiveFileName = "${project.name}.jar"
+        destinationDirectory = layout.buildDirectory.dir('dist')
+        manifest {
+            attributes(
+                    'Implementation-Title': project.name,
+                    'Implementation-Version': project.version,
+                    'Class-Path': configurations.runtimeClasspath.collect { "libs/${it.name}" }.join(' ')
+            )
+        }
+        from sourceSets.main.output
     }
 
-    war {
-        archiveFileName = "${project.name}.war"
+    tasks.register('copyLibs', Copy) {
+        from configurations.runtimeClasspath
+        into layout.buildDirectory.dir('dist/libs')
     }
 
-    jar {
-        enabled = false
+    tasks.named('assemble') {
+        dependsOn tasks.named('serviceJar'), tasks.named('copyLibs')
+    }
+}
+
+subprojects {
+    afterEvaluate {
+        tasks.named('serviceJar') {
+            manifest {
+                attributes('Main-Class': project.ext.mainClass)
+            }
+        }
     }
 }

@@ -1,0 +1,30 @@
+server:
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: /tmp
+      prefix: shop-access
+      suffix: .log
+
+eureka:
+  instance:
+    non-secure-port: ${INSTANCE_HTTP_PORT:${server.port:8080}}
+
+vehicle-service:
+  ribbon:
+    ReadTimeout: 8000
+    ConnectTimeout: 2000
+    MaxAutoRetries: 0
+    MaxAutoRetriesNextServer: 1
+    OkToRetryOnAllOperations: false
+    ServerListRefreshInterval: 2000
+    MaxConnectionsPerHost: 10
+    MaxTotalHttpConnections: 20
+
+ribbon:
+  eager-load:
+    enabled: true
+    clients: vehicle-service
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:https://se.ifmo.ru,https://localhost:8080,http://localhost:3000,http://localhost:8080,http://localhost}
