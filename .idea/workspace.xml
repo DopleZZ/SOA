@@ -4,28 +4,46 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec1ed529-839b-4e5d-a183-a2352d9fcbc5" name="Changes" comment="">
+    <list default="true" id="ec1ed529-839b-4e5d-a183-a2352d9fcbc5" name="Changes" comment="added lab2 parts">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/public/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/public/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/routes/vehicles.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/routes/vehicles.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/views/index.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/client/views/index.ejs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy/generate-keystores.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy/shop-service-https.cli" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy/vehicle-service-https.cli" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/static/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/static/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/static/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/static/config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openapi-templates/enumOuterClass.mustache" beforeDir="false" afterPath="$PROJECT_DIR$/openapi-templates/enumOuterClass.mustache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openapi-templates/pojo.mustache" beforeDir="false" afterPath="$PROJECT_DIR$/openapi-templates/pojo.mustache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/shop-service/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/RestApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/client/VehicleServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/client/VehicleServiceClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/cors/CorsFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/cors/CorsFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/exception/ApiException.java" beforeDir="false" afterPath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/exception/ApiException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/exception/ApiExceptionMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/exception/ExtraStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/exception/ExtraStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/param/ParamConverters.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/resource/ShopResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/shop-service/src/main/java/ru/itmo/soa/shop/resource/ShopResource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vehicle-service.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vehicle-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/FilterSpec.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/SortSpec.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/VehicleField.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/VehicleField.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/RestApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/cors/CorsFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/cors/CorsFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/exception/ApiException.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/exception/ApiException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/exception/ApiExceptionMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/exception/ExtraStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/exception/ExtraStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/param/ParamConverters.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/SortKey.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/SortKey.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/VehicleQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/query/VehicleQuery.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/resource/VehiclesResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/resource/VehiclesResource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/store/VehicleStore.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/store/Page.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/store/Page.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/store/RsqlCriteriaTransformer.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/store/RsqlCriteriaTransformer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/store/VehicleEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/store/VehicleEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/store/VehicleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/store/VehicleRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/java/ru/itmo/soa/vehicle/xml/StrictJaxbContextResolver.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/resources/META-INF/persistence.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vehicle-service/src/main/webapp/WEB-INF/beans.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,16 +71,16 @@
             <expand>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="soa-lab2" type="f1a62948:ProjectNode" />
+                <item name="soa-lab3" type="f1a62948:ProjectNode" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="soa-lab2" type="f1a62948:ProjectNode" />
+                <item name="soa-lab3" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="soa-lab2" type="f1a62948:ProjectNode" />
+                <item name="soa-lab3" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="build" type="c8890929:TasksNode$1" />
               </path>
@@ -111,29 +129,40 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Download Sources.executor": "Run",
-    "Gradle.SOA [build].executor": "Run",
-    "Gradle.SOA [war].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/montana/MyLabs/soa/SOA",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.SOA [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.SOA [war].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;lab3&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/montana/MyLabs/soa/SOA&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
   <component name="RunManager" selected="Gradle.SOA [war]">
     <configuration name="SOA [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
@@ -185,6 +214,48 @@
       <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
+    <configuration name="ConfigServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="soa-lab3.config-server.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="ru.itmo.soa.config.ConfigServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EurekaServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="soa-lab3.eureka-server.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="ru.itmo.soa.eureka.EurekaServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="soa-lab3.gateway.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="ru.itmo.soa.gateway.GatewayApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="InfraServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="soa-lab3.infra-server.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="ru.itmo.soa.infra.InfraServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ShopServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="soa-lab3.shop-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="ru.itmo.soa.shop.ShopServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VehicleServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="soa-lab3.vehicle-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="ru.itmo.soa.vehicle.VehicleServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.SOA [war]" />
@@ -211,8 +282,19 @@
       <workItem from="1790000838967" duration="644000" />
       <workItem from="1790270615021" duration="2395000" />
       <workItem from="1790340313331" duration="8479000" />
-      <workItem from="1791386028689" duration="4899000" />
+      <workItem from="1791386028689" duration="13485000" />
+      <workItem from="1792609489427" duration="9503000" />
+      <workItem from="1793038666605" duration="1695000" />
     </task>
+    <task id="LOCAL-00001" summary="added lab2 parts">
+      <option name="closed" value="true" />
+      <created>1791400145059</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1791400145059</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -232,6 +314,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="123" />
     <MESSAGE value="123" />
-    <option name="LAST_COMMIT_MESSAGE" value="123" />
+    <MESSAGE value="added lab2 parts" />
+    <option name="LAST_COMMIT_MESSAGE" value="added lab2 parts" />
   </component>
 </project>

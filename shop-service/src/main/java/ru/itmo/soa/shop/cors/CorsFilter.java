@@ -1,28 +1,26 @@
 package ru.itmo.soa.shop.cors;
 
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@WebFilter(urlPatterns = "/*")
-public class CorsFilter implements Filter {
+@Component
+public class CorsFilter extends OncePerRequestFilter {
 
-    private Set<String> allowedOrigins;
+    private final Set<String> allowedOrigins;
+    private final boolean allowAll;
 
-    @Override
-    public void init(FilterConfig filterConfig) {
-        String origins = System.getProperty("cors.allowed.origins", "https://se.ifmo.ru");
+    public CorsFilter(@Value("${cors.allowed-origins:https://se.ifmo.ru}") String origins) {
+        allowAll = origins.trim().equals("*");
         allowedOrigins = Arrays.stream(origins.split(","))
                 .map(String::trim)
                 .filter(item -> !item.isEmpty())
@@ -30,22 +28,19 @@ public class CorsFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        String origin = httpRequest.getHeader("Origin");
-        if (origin != null && allowedOrigins.contains(origin)) {
-            httpResponse.setHeader("Access-Control-Allow-Origin", origin);
-            httpResponse.addHeader("Vary", "Origin");
-            httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-            httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
-            httpResponse.setHeader("Access-Control-Max-Age", "86400");
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+        String origin = request.getHeader("Origin");
+        if (origin != null && (allowAll || allowedOrigins.contains(origin))) {
+            response.setHeader("Access-Control-Allow-Origin", allowAll ? "*" : origin);
+            response.addHeader("Vary", "Origin");
+            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+            response.setHeader("Access-Control-Max-Age", "86400");
         }
 
-        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
-            httpResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             return;
         }
 

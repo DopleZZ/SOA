@@ -7,13 +7,10 @@
     const FUEL_TYPES = ['ELECTRICITY', 'MANPOWER', 'ANTIMATTER'];
     const SORT_ROWS = 2;
 
-
     const defaults = (window.APP_CONFIG || {});
     const settings = {
-        vehicleBase: localStorage.getItem('vehicleBase') || defaults.vehicleServiceBaseUrl || 'https://localhost:8443',
-        shopBase: localStorage.getItem('shopBase') || defaults.shopServiceBaseUrl || 'https://localhost:8543'
+        gatewayBase: localStorage.getItem('gatewayBase') || defaults.gatewayBaseUrl || 'https://localhost:19100'
     };
-
 
     class ApiError extends Error {
         constructor(status, title, detail, path) {
@@ -24,7 +21,6 @@
             this.path = path;
         }
     }
-
 
     function esc(value) {
         return String(value)
@@ -46,10 +42,16 @@
         return `<Vehicle>${parts.join('')}</Vehicle>`;
     }
 
-    function parseXml(text) {
-        const doc = new DOMParser().parseFromString(text, 'application/xml');
+    function parseXmlSafe(text) {
+        let doc = new DOMParser().parseFromString(text, 'application/xml');
         if (doc.getElementsByTagName('parsererror').length > 0) {
-            throw new ApiError(0, 'Некорректный XML в ответе сервиса', text.slice(0, 500), '');
+            // сервис может вернуть список без корневого элемента (<Vehicle/><Vehicle/>...),
+            // формально это невалидный XML — оборачиваем в фиктивный <list> и пробуем снова
+            const wrapped = '<list>' + String(text).replace(/<\?xml[\s\S]*?\?>/, '').trim() + '</list>';
+            doc = new DOMParser().parseFromString(wrapped, 'application/xml');
+            if (doc.getElementsByTagName('parsererror').length > 0) {
+                throw new ApiError(0, 'Некорректный XML в ответе сервиса', text.slice(0, 500), '');
+            }
         }
         return doc;
     }
@@ -98,7 +100,6 @@
         };
     }
 
-
     function buildUrl(base, path, query) {
         let url = base.replace(/\/+$/, '') + path;
         if (query) {
@@ -130,7 +131,7 @@
 
         const raw = await response.text();
         if (response.ok) {
-            return raw.trim() ? parseXml(raw) : null;
+            return raw.trim() ? parseXmlSafe(raw) : null;
         }
 
         let title = 'Ошибка';
@@ -138,7 +139,7 @@
         let errorPath = path;
         if (raw.trim()) {
             try {
-                const doc = parseXml(raw);
+                const doc = parseXmlSafe(raw);
                 const node = doc.getElementsByTagName('Error')[0] || doc.documentElement;
                 if (node) {
                     title = text(node, 'error') || title;
@@ -152,39 +153,38 @@
         throw new ApiError(response.status, title, detail, errorPath);
     }
 
-
     const api = {
         listVehicles({ pageNumber, pageSize, sort, filter }) {
-            return callXml(settings.vehicleBase, '/api/vehicles', {
+            return callXml(settings.gatewayBase, '/api/vehicles', {
                 query: { pageNumber, pageSize, sort, filter }
             }).then(pageFromXml);
         },
         getVehicle(id) {
-            return callXml(settings.vehicleBase, `/api/vehicles/${encodeURIComponent(id)}`)
+            return callXml(settings.gatewayBase, `/api/vehicles/${encodeURIComponent(id)}`)
                 .then((doc) => vehicleFromXml(doc.documentElement));
         },
         createVehicle(fields) {
-            return callXml(settings.vehicleBase, '/api/vehicles', { method: 'POST', body: vehicleXml(fields) });
+            return callXml(settings.gatewayBase, '/api/vehicles', { method: 'POST', body: vehicleXml(fields) });
         },
         updateVehicle(id, fields) {
-            return callXml(settings.vehicleBase, `/api/vehicles/${encodeURIComponent(id)}`, {
+            return callXml(settings.gatewayBase, `/api/vehicles/${encodeURIComponent(id)}`, {
                 method: 'PUT', body: vehicleXml(fields)
             });
         },
         patchVehicle(id, fields) {
-            return callXml(settings.vehicleBase, `/api/vehicles/${encodeURIComponent(id)}`, {
+            return callXml(settings.gatewayBase, `/api/vehicles/${encodeURIComponent(id)}`, {
                 method: 'PATCH', body: vehicleXml(fields)
             });
         },
         deleteVehicle(id) {
-            return callXml(settings.vehicleBase, `/api/vehicles/${encodeURIComponent(id)}`, { method: 'DELETE' });
+            return callXml(settings.gatewayBase, `/api/vehicles/${encodeURIComponent(id)}`, { method: 'DELETE' });
         },
         sumEnginePower() {
-            return callXml(settings.vehicleBase, '/api/vehicles/sum-engine-power')
+            return callXml(settings.gatewayBase, '/api/vehicles/sum-engine-power')
                 .then((doc) => text(doc.documentElement, 'sum'));
         },
         groupCountById() {
-            return callXml(settings.vehicleBase, '/api/vehicles/group-count-by-id').then((doc) =>
+            return callXml(settings.gatewayBase, '/api/vehicles/group-count-by-id').then((doc) =>
                 Array.from(doc.getElementsByTagName('entry')).map((entry) => ({
                     id: text(entry, 'id'),
                     count: text(entry, 'count')
@@ -192,19 +192,18 @@
             );
         },
         vehiclesByTypeGreater(type) {
-            return callXml(settings.vehicleBase, `/api/vehicles/by-type-greater/${encodeURIComponent(type)}`)
+            return callXml(settings.gatewayBase, `/api/vehicles/by-type-greater/${encodeURIComponent(type)}`)
                 .then(vehicleListFromXml);
         },
         shopSearchByType(type) {
-            return callXml(settings.shopBase, `/shop/search/by-type/${encodeURIComponent(type)}`)
+            return callXml(settings.gatewayBase, `/shop/search/by-type/${encodeURIComponent(type)}`)
                 .then(vehicleListFromXml);
         },
         shopSearchByEnginePowerRange(from, to) {
-            return callXml(settings.shopBase, `/shop/search/by-engine-power/${encodeURIComponent(from)}/${encodeURIComponent(to)}`)
+            return callXml(settings.gatewayBase, `/shop/search/by-engine-power/${encodeURIComponent(from)}/${encodeURIComponent(to)}`)
                 .then(vehicleListFromXml);
         }
     };
-
 
     const app = document.getElementById('app');
     const globalError = document.getElementById('global-error');
@@ -291,7 +290,6 @@
             });
         });
     }
-
 
     const listState = { pageNumber: 1, pageSize: 10, sort: [['id', 'asc']], filter: [] };
 
@@ -443,7 +441,6 @@
         }
     }
 
-
     function vehicleFieldsHtml(v, patch) {
         const value = (field) => (v && v[field] !== undefined && v[field] !== null ? v[field] : '');
         return `
@@ -551,7 +548,6 @@
         });
     }
 
-
     function renderStats() {
         app.innerHTML = `
             <section>
@@ -606,7 +602,6 @@
             }
         });
     }
-
 
     function renderShop() {
         app.innerHTML = `
@@ -667,32 +662,29 @@
         });
     }
 
-
     function renderSettings() {
         app.innerHTML = `
             <section>
                 <h1>Настройки</h1>
-                <p>Адреса обоих сервисов. Значения сохраняются в localStorage браузера
-                и имеют приоритет над <code>config.js</code>.</p>
+                <p>Адрес шлюза (zuul): через него идут запросы к обоим сервисам.
+                Значение сохраняется в localStorage браузера и имеет приоритет
+                над <code>config.js</code>.</p>
                 <form id="settings-form">
                     <div id="settings-msg"></div>
-                    <label>vehicle-service (базовый URL) <input type="text" name="vehicleBase" value="${esc(settings.vehicleBase)}" required></label>
-                    <label>shop-service (базовый URL) <input type="text" name="shopBase" value="${esc(settings.shopBase)}" required></label>
+                    <label>Шлюз (базовый URL) <input type="text" name="gatewayBase" value="${esc(settings.gatewayBase)}" required></label>
                     <button type="submit" class="primary">Сохранить</button>
                 </form>
             </section>`;
         document.getElementById('settings-form').addEventListener('submit', (event) => {
             event.preventDefault();
             const form = event.target;
-            settings.vehicleBase = form.vehicleBase.value.trim().replace(/\/+$/, '');
-            settings.shopBase = form.shopBase.value.trim().replace(/\/+$/, '');
-            localStorage.setItem('vehicleBase', settings.vehicleBase);
-            localStorage.setItem('shopBase', settings.shopBase);
+            settings.gatewayBase = form.vehicleBase.value.trim().replace(/\/+$/, '');
+            settings.gatewayBase = form.shopBase.value.trim().replace(/\/+$/, '');
+            localStorage.setItem('gatewayBase', settings.gatewayBase);
             document.getElementById('settings-msg').innerHTML =
                 '<p><strong>Сохранено.</strong></p>';
         });
     }
-
 
     function setActiveNav(path) {
         const section = path === '' || path === '/' ? '/' : '/' + path.split('/')[1];

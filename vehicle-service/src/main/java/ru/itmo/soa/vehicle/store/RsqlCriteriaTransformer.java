@@ -8,15 +8,15 @@ import cz.jirutka.rsql.parser.ast.LogicalOperator;
 import cz.jirutka.rsql.parser.ast.Node;
 import cz.jirutka.rsql.parser.ast.OrNode;
 import cz.jirutka.rsql.parser.ast.RSQLVisitor;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import ru.itmo.soa.vehicle.exception.ApiException;
 import ru.itmo.soa.vehicle.model.FuelType;
 import ru.itmo.soa.vehicle.model.VehicleType;
 import ru.itmo.soa.vehicle.query.VehicleField;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -68,23 +68,35 @@ public class RsqlCriteriaTransformer implements RSQLVisitor<Predicate, Void> {
         ComparisonOperator operator = node.getOperator();
 
         if (operator.isMultiValue()) {
-            List<Object> values = node.getArguments().stream()
-                    .map(argument -> typedValue(field, argument))
-                    .toList();
+            List<Object> values = new ArrayList<>();
+            for (String argument : node.getArguments()) {
+                values.add(typedValue(field, argument));
+            }
             Predicate in = path.in(values);
             return "=in=".equals(operator.getSymbol()) ? in : builder.not(in);
         }
 
         String value = node.getArguments().get(0);
-        return switch (operator.getSymbol()) {
-            case "==" -> equality(field, path, value);
-            case "!=" -> builder.not(equality(field, path, value));
-            case "=gt=" -> compare(field, path, value, Comparison.GREATER);
-            case "=ge=" -> compare(field, path, value, Comparison.GREATER_OR_EQUAL);
-            case "=lt=" -> compare(field, path, value, Comparison.LESS);
-            case "=le=" -> compare(field, path, value, Comparison.LESS_OR_EQUAL);
-            default -> throw ApiException.badRequest("Неподдерживаемый оператор фильтрации: " + operator.getSymbol());
-        };
+        String symbol = operator.getSymbol();
+        if ("==".equals(symbol)) {
+            return equality(field, path, value);
+        }
+        if ("!=".equals(symbol)) {
+            return builder.not(equality(field, path, value));
+        }
+        if ("=gt=".equals(symbol)) {
+            return compare(field, path, value, Comparison.GREATER);
+        }
+        if ("=ge=".equals(symbol)) {
+            return compare(field, path, value, Comparison.GREATER_OR_EQUAL);
+        }
+        if ("=lt=".equals(symbol)) {
+            return compare(field, path, value, Comparison.LESS);
+        }
+        if ("=le=".equals(symbol)) {
+            return compare(field, path, value, Comparison.LESS_OR_EQUAL);
+        }
+        throw ApiException.badRequest("Неподдерживаемый оператор фильтрации: " + operator.getSymbol());
     }
 
     private enum Comparison {
@@ -100,57 +112,78 @@ public class RsqlCriteriaTransformer implements RSQLVisitor<Predicate, Void> {
 
     private Predicate compare(VehicleField field, Path<Object> path, String value, Comparison comparison) {
         if (field.getKind() == VehicleField.Kind.ENUM) {
-            int ordinal = (Integer) enumOrdinal(field, value);
-            return switch (comparison) {
-                case GREATER -> builder.greaterThan(path.as(Integer.class), ordinal);
-                case GREATER_OR_EQUAL -> builder.greaterThanOrEqualTo(path.as(Integer.class), ordinal);
-                case LESS -> builder.lessThan(path.as(Integer.class), ordinal);
-                case LESS_OR_EQUAL -> builder.lessThanOrEqualTo(path.as(Integer.class), ordinal);
-            };
+            int ordinal = ((Enum<?>) enumConstant(field, value)).ordinal();
+            switch (comparison) {
+                case GREATER:
+                    return builder.greaterThan(path.as(Integer.class), ordinal);
+                case GREATER_OR_EQUAL:
+                    return builder.greaterThanOrEqualTo(path.as(Integer.class), ordinal);
+                case LESS:
+                    return builder.lessThan(path.as(Integer.class), ordinal);
+                case LESS_OR_EQUAL:
+                    return builder.lessThanOrEqualTo(path.as(Integer.class), ordinal);
+                default:
+                    throw ApiException.badRequest("Поле не поддерживает сравнение: " + field.getFieldName());
+            }
         }
         Object typed = typedValue(field, value);
-        if (typed instanceof Double number) {
-            return switch (comparison) {
-                case GREATER -> builder.greaterThan(path.as(Double.class), number);
-                case GREATER_OR_EQUAL -> builder.greaterThanOrEqualTo(path.as(Double.class), number);
-                case LESS -> builder.lessThan(path.as(Double.class), number);
-                case LESS_OR_EQUAL -> builder.lessThanOrEqualTo(path.as(Double.class), number);
-            };
+        if (typed instanceof Double) {
+            Double number = (Double) typed;
+            switch (comparison) {
+                case GREATER:
+                    return builder.greaterThan(path.as(Double.class), number);
+                case GREATER_OR_EQUAL:
+                    return builder.greaterThanOrEqualTo(path.as(Double.class), number);
+                case LESS:
+                    return builder.lessThan(path.as(Double.class), number);
+                case LESS_OR_EQUAL:
+                    return builder.lessThanOrEqualTo(path.as(Double.class), number);
+                default:
+                    throw ApiException.badRequest("Поле не поддерживает сравнение: " + field.getFieldName());
+            }
         }
-        if (typed instanceof OffsetDateTime date) {
-            return switch (comparison) {
-                case GREATER -> builder.greaterThan(path.as(OffsetDateTime.class), date);
-                case GREATER_OR_EQUAL -> builder.greaterThanOrEqualTo(path.as(OffsetDateTime.class), date);
-                case LESS -> builder.lessThan(path.as(OffsetDateTime.class), date);
-                case LESS_OR_EQUAL -> builder.lessThanOrEqualTo(path.as(OffsetDateTime.class), date);
-            };
+        if (typed instanceof OffsetDateTime) {
+            OffsetDateTime date = (OffsetDateTime) typed;
+            switch (comparison) {
+                case GREATER:
+                    return builder.greaterThan(path.as(OffsetDateTime.class), date);
+                case GREATER_OR_EQUAL:
+                    return builder.greaterThanOrEqualTo(path.as(OffsetDateTime.class), date);
+                case LESS:
+                    return builder.lessThan(path.as(OffsetDateTime.class), date);
+                case LESS_OR_EQUAL:
+                    return builder.lessThanOrEqualTo(path.as(OffsetDateTime.class), date);
+                default:
+                    throw ApiException.badRequest("Поле не поддерживает сравнение: " + field.getFieldName());
+            }
         }
         throw ApiException.badRequest("Поле не поддерживает сравнение: " + field.getFieldName());
     }
 
     private Object typedValue(VehicleField field, String value) {
-        return switch (field.getKind()) {
-            case NUMERIC -> parseNumeric(value);
-            case DATE -> parseDate(value);
-            case ENUM -> enumConstant(field, value);
-            default -> value;
-        };
-    }
-
-    private Object enumConstant(VehicleField field, String value) {
-        try {
-            return switch (field) {
-                case TYPE -> VehicleType.valueOf(value);
-                case FUEL_TYPE -> FuelType.valueOf(value);
-                default -> throw ApiException.badRequest("Поле не является перечислением: " + field.getFieldName());
-            };
-        } catch (IllegalArgumentException e) {
-            throw ApiException.unprocessableEntity("Значение вне перечня: " + value);
+        switch (field.getKind()) {
+            case NUMERIC:
+                return parseNumeric(value);
+            case DATE:
+                return parseDate(value);
+            case ENUM:
+                return enumConstant(field, value);
+            default:
+                return value;
         }
     }
 
-    private Object enumOrdinal(VehicleField field, String value) {
-        return ((Enum<?>) enumConstant(field, value)).ordinal();
+    private Object enumConstant(VehicleField field, String value) {
+        if (field != VehicleField.TYPE && field != VehicleField.FUEL_TYPE) {
+            throw ApiException.badRequest("Поле не является перечислением: " + field.getFieldName());
+        }
+        try {
+            return field == VehicleField.TYPE
+                    ? VehicleType.valueOf(value)
+                    : FuelType.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            throw ApiException.unprocessableEntity("Значение вне перечня: " + value);
+        }
     }
 
     private Object parseNumeric(String value) {

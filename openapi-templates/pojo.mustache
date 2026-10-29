@@ -6,12 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
+import {{#useJakartaEe}}jakarta{{/useJakartaEe}}{{^useJakartaEe}}javax{{/useJakartaEe}}.xml.bind.annotation.XmlAccessType;
+import {{#useJakartaEe}}jakarta{{/useJakartaEe}}{{^useJakartaEe}}javax{{/useJakartaEe}}.xml.bind.annotation.XmlAccessorType;
+import {{#useJakartaEe}}jakarta{{/useJakartaEe}}{{^useJakartaEe}}javax{{/useJakartaEe}}.xml.bind.annotation.XmlElement;
+import {{#useJakartaEe}}jakarta{{/useJakartaEe}}{{^useJakartaEe}}javax{{/useJakartaEe}}.xml.bind.annotation.XmlElementWrapper;
+import {{#useJakartaEe}}jakarta{{/useJakartaEe}}{{^useJakartaEe}}javax{{/useJakartaEe}}.xml.bind.annotation.XmlRootElement;
+import {{#useJakartaEe}}jakarta{{/useJakartaEe}}{{^useJakartaEe}}javax{{/useJakartaEe}}.xml.bind.annotation.XmlType;
 
 {{#discriminator}}{{>typeInfoAnnotation}}{{/discriminator}}{{#description}}/**
  * {{.}}

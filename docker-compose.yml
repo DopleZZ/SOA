@@ -1,0 +1,129 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: vehicles
+      POSTGRES_USER: vehicles
+      POSTGRES_PASSWORD: vehicles
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vehicles -d vehicles"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  infra-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+      args:
+        APP: infra-server
+    environment:
+      SERVER_PORT: "19100"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://localhost:19100/eureka/
+      CONFIG_REPO_DIR: /config-repo
+      SHOP_ROUTE_URL: http://haproxy:8090
+      VEHICLE_SERVERS: wildfly-vehicle:8080
+      SPRING_PROFILES_ACTIVE: native
+      JAVA_OPTS: "-Xms32m -Xmx128m -Xss256k -XX:MaxMetaspaceSize=96m -XX:ReservedCodeCacheSize=32m -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -XX:ActiveProcessorCount=1 -XX:-UsePerfData"
+    volumes:
+      - ./config-repo:/config-repo:ro
+    ports:
+      - "19101:19100"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/19100"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  wildfly-vehicle:
+    build:
+      context: .
+      dockerfile: Dockerfile.wildfly
+      args:
+        WAR: vehicle-service/build/dist/vehicle-service.war
+    environment:
+      CONFIG_SERVER_URL: http://infra-server:19100
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://infra-server:19100/eureka/
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: vehicles
+      DB_USER: vehicles
+      DB_PASSWORD: vehicles
+      INSTANCE_HTTP_PORT: "8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      infra-server:
+        condition: service_healthy
+    ports:
+      - "19381:8080"
+
+  wildfly-shop:
+    build:
+      context: .
+      dockerfile: Dockerfile.wildfly
+      args:
+        WAR: shop-service/build/dist/shop-service.war
+    environment:
+      VEHICLE_SERVERS: wildfly-vehicle:8080
+      CONFIG_SERVER_URL: http://infra-server:19100
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://infra-server:19100/eureka/
+      INSTANCE_HTTP_PORT: "8080"
+    depends_on:
+      infra-server:
+        condition: service_healthy
+    ports:
+      - "19401:8080"
+
+  shop-2:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+      args:
+        APP: shop-service
+    environment:
+      SERVER_PORT: "19402"
+      SERVER_TOMCAT_THREADS_MAX: "2"
+      SERVER_TOMCAT_MAX_CONNECTIONS: "3"
+      SERVER_TOMCAT_ACCEPT_COUNT: "1"
+      INSTANCE_HTTP_PORT: "19402"
+      CONFIG_SERVER_URL: http://infra-server:19100
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://infra-server:19100/eureka/
+      JAVA_OPTS: "-Xms32m -Xmx128m -Xss256k -XX:MaxMetaspaceSize=96m -XX:ReservedCodeCacheSize=32m -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -XX:ActiveProcessorCount=1 -XX:-UsePerfData"
+    depends_on:
+      infra-server:
+        condition: service_healthy
+    ports:
+      - "19402:19402"
+
+  haproxy:
+    image: haproxy:2.9-alpine
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    ports:
+      - "8090:8090"
+      - "8404:8404"
+    depends_on:
+      - wildfly-shop
+      - shop-2
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    environment:
+      PORT: "3000"
+      VEHICLE_SERVICE_BASE_URL: http://infra-server:19100
+      SHOP_SERVICE_BASE_URL: http://infra-server:19100
+      TLS_REJECT_UNAUTHORIZED: "false"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - infra-server
+
+volumes:
+  pgdata:

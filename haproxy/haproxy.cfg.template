@@ -1,0 +1,19 @@
+global
+    maxconn 256
+
+defaults
+    mode http
+    timeout connect 5s
+    timeout client 30s
+    timeout server 30s
+
+frontend shop_frontend
+    bind *:__PORT_HAPROXY__
+    default_backend shop_backends
+
+backend shop_backends
+    balance roundrobin
+    option httpchk GET /actuator/health
+    http-check expect status 200
+    server shop-wildfly localhost:__PORT_SHOP_WF__ check inter 2s fall 3 rise 2
+    server shop-jar localhost:__PORT_SHOP_JAR__ check inter 2s fall 3 rise 2
